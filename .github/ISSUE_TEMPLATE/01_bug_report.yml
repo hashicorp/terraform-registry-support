@@ -1,0 +1,108 @@
+name: Bug report
+description: Create a report to help us improve
+title: ""
+labels: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Please fill out the form below with as much detail as possible to help us understand and resolve the issue.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: Tell us what happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: Tell us what you expected to happen instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+      placeholder: Paste screenshots, links, or any visual context here.
+
+  - type: input
+    id: registry-url
+    attributes:
+      label: Registry URL
+      description: Link to the page where the issue occurs.
+      placeholder: https://registry.terraform.io/...
+    validations:
+      required: true
+
+  - type: input
+    id: desktop-os
+    attributes:
+      label: Desktop OS
+      description: Please complete the following information if the issue is on desktop.
+      placeholder: e.g. macOS, Windows, Linux
+
+  - type: input
+    id: desktop-browser
+    attributes:
+      label: Desktop browser
+      placeholder: e.g. Chrome, Safari, Firefox
+
+  - type: input
+    id: desktop-version
+    attributes:
+      label: Desktop browser version
+      placeholder: e.g. 22
+
+  - type: input
+    id: smartphone-device
+    attributes:
+      label: Smartphone device
+      description: Please complete the following information if the issue is on mobile.
+      placeholder: e.g. iPhone 6
+
+  - type: input
+    id: smartphone-os
+    attributes:
+      label: Smartphone OS
+      placeholder: e.g. iOS 8.1, Android 14
+
+  - type: input
+    id: smartphone-browser
+    attributes:
+      label: Smartphone browser
+      placeholder: e.g. Safari, Chrome, stock browser
+
+  - type: input
+    id: smartphone-version
+    attributes:
+      label: Smartphone browser version
+      placeholder: e.g. 22
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+      placeholder: Include any other relevant details.

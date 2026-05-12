@@ -1,0 +1,4 @@
+{
+  "codeql-scanner.github.owner": "hashicorp",
+  "codeql-scanner.github.repo": "terraform-registry-support"
+}
