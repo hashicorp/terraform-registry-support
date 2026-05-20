@@ -1,0 +1,174 @@
+name: Change provider source repository
+description: Request an update to the source repository for a public registry provider
+title: "[Artifact Management]: Change provider source repository"
+labels: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to request a source repository change for a public registry provider.
+
+        Before filing, please try organization publishing first. This resolves many publishing and artifact management issues.
+        HCP Terraform Public Namespaces: https://developer.hashicorp.com/terraform/cloud-docs/public-namespace
+
+        If you would prefer to make this request in private, please contact us via email at [Terraform.Registry.Support@ibm.com](mailto:Terraform.Registry.Support@ibm.com).
+        Be sure to include the same information requested in this form to help us best assist you.
+
+  - type: dropdown
+    id: org-publishing-tried
+    attributes:
+      label: Have you tried organization publishing first?
+      description: Organization publishing solves many publishing or artifact management issues.
+      options:
+        - "Yes, I have already tried organization publishing"
+        - "No, I have not tried organization publishing"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Registry artifact details
+
+  - type: input
+    id: artifact-url
+    attributes:
+      label: Registry artifact URL
+      description: Link to the provider in the registry.
+      placeholder: https://registry.terraform.io/providers/...
+    validations:
+      required: true
+
+  - type: input
+    id: current-source-repository-url
+    attributes:
+      label: Current source repository URL
+      placeholder: https://github.com/<org>/<repo>
+    validations:
+      required: true
+
+  - type: input
+    id: requested-new-source-repository-url
+    attributes:
+      label: Requested new source repository URL
+      placeholder: https://github.com/<org>/<repo>
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Request details
+
+  - type: textarea
+    id: requested-action
+    attributes:
+      label: Requested action
+      description: Describe the repository change clearly and concisely.
+      placeholder: Update the provider source repository from <current repo> to <new repo>.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason-for-request
+    attributes:
+      label: Reason for request
+      placeholder: Explain why the source repository needs to be changed.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Requestor details
+
+  - type: input
+    id: requestor-name
+    attributes:
+      label: Requestor name
+      placeholder: Jane Doe
+    validations:
+      required: true
+
+  - type: input
+    id: requestor-email
+    attributes:
+      label: Requestor email
+      placeholder: name@example.com
+    validations:
+      required: true
+
+  - type: input
+    id: requestor-github-username
+    attributes:
+      label: GitHub username
+      placeholder: octocat
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Ownership verification requirements
+
+        To protect registry users and publishers, we can only perform administrative changes after verifying ownership of the published artifact.
+
+        Create a file named `.terraform-registry` in the root of **both** the current repository and the new repository on the default branch with the following contents:
+
+        ```text
+        Request: <concisely explain your request, for example: "change source repo to https://github.com/user123/repo123">
+        Registry Link: <link to your artifact on the Registry>
+        Request by: <the email associated with this request>
+        ```
+
+        After committing both files, include links to them below.
+
+  - type: input
+    id: current-terraform-registry-file-link
+    attributes:
+      label: Link to current repository .terraform-registry file
+      description: Include a URL to the `.terraform-registry` file at the root of the default branch of the current repository.
+      placeholder: https://github.com/<org>/<repo>/blob/<default-branch>/.terraform-registry
+    validations:
+      required: true
+
+  - type: input
+    id: new-terraform-registry-file-link
+    attributes:
+      label: Link to new repository .terraform-registry file
+      description: Include a URL to the `.terraform-registry` file at the root of the default branch of the new repository.
+      placeholder: https://github.com/<org>/<repo>/blob/<default-branch>/.terraform-registry
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: verification-checklist
+    attributes:
+      label: Verification checklist
+      options:
+        - label: I have added the `.terraform-registry` file to the default branch of the current artifact repository.
+          required: true
+        - label: I have added the `.terraform-registry` file to the default branch of the new repository.
+          required: true
+        - label: The `Request by` email in both files matches the email associated with this issue.
+          required: true
+        - label: The registry link above points to the correct public registry artifact.
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Additional notes
+
+        No action will be taken until ownership has been verified.
+        For provider source repository changes, verification can be completed through this issue template, but the internal change process may still require additional follow-up.
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other relevant details, links, screenshots, or error messages here.
+      placeholder: Include any additional details that will help us review this request.
+    validations:
+      required: false

@@ -1,0 +1,166 @@
+name: Remove artifact from registry
+description: Request removal of a public registry provider or module
+title: "[Artifact Management]: Remove artifact from registry"
+labels: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to request removal of a public registry artifact.
+
+        Before filing, please try organization publishing first. This resolves many publishing and artifact management issues.
+        HCP Terraform Public Namespaces: https://developer.hashicorp.com/terraform/cloud-docs/public-namespace
+
+        If you would prefer to make this request in private, please contact us via email at [Terraform.Registry.Support@ibm.com](mailto:Terraform.Registry.Support@ibm.com).
+        Be sure to include the same information requested in this form to help us best assist you.
+
+  - type: dropdown
+    id: org-publishing-tried
+    attributes:
+      label: Have you tried organization publishing first?
+      description: Organization publishing solves many publishing or artifact management issues.
+      options:
+        - "Yes, I have already tried organization publishing"
+        - "No, I have not tried organization publishing"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Registry artifact details
+
+  - type: input
+    id: artifact-url
+    attributes:
+      label: Registry artifact URL
+      description: Link to the artifact in the registry.
+      placeholder: https://registry.terraform.io/...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: artifact-type
+    attributes:
+      label: Artifact type
+      options:
+        - Provider
+        - Module
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: current-source-repository-url
+    attributes:
+      label: Current source repository URL
+      placeholder: https://github.com/<org>/<repo>
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Request details
+
+  - type: textarea
+    id: requested-action
+    attributes:
+      label: Requested action
+      description: Describe the removal request clearly and concisely.
+      placeholder: Remove this artifact from the public registry.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason-for-request
+    attributes:
+      label: Reason for request
+      placeholder: Explain why this artifact should be removed from the registry.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Requestor details
+
+  - type: input
+    id: requestor-name
+    attributes:
+      label: Requestor name
+      placeholder: Jane Doe
+    validations:
+      required: true
+
+  - type: input
+    id: requestor-email
+    attributes:
+      label: Requestor email
+      placeholder: name@example.com
+    validations:
+      required: true
+
+  - type: input
+    id: requestor-github-username
+    attributes:
+      label: GitHub username
+      placeholder: octocat
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Ownership verification requirements
+
+        To protect registry users and publishers, we can only perform administrative changes after verifying ownership of the published artifact.
+
+        Create a file named `.terraform-registry` in the root of the artifact repository on the default branch with the following contents:
+
+        ```text
+        Request: remove from registry
+        Registry Link: <link to your artifact on the Registry>
+        Request by: <the email associated with this request>
+        ```
+
+        After committing the file, include a link to it below.
+
+  - type: input
+    id: current-terraform-registry-file-link
+    attributes:
+      label: Link to .terraform-registry file
+      description: Include a URL to the `.terraform-registry` file at the root of the default branch of the artifact repository.
+      placeholder: https://github.com/<org>/<repo>/blob/<default-branch>/.terraform-registry
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: verification-checklist
+    attributes:
+      label: Verification checklist
+      options:
+        - label: I have added the `.terraform-registry` file to the default branch of the artifact repository.
+          required: true
+        - label: The `Request by` email in the file matches the email associated with this issue.
+          required: true
+        - label: The registry link above points to the correct public registry artifact.
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Additional notes
+
+        No action will be taken until ownership has been verified.
+        Changes to artifact details may require direct administrative updates and are handled with extra caution.
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other relevant details, links, screenshots, or error messages here.
+      placeholder: Include any additional details that will help us review this request.
+    validations:
+      required: false
