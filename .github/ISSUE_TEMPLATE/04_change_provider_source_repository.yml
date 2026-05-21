@@ -1,7 +1,9 @@
 name: Change provider source repository
 description: Request an update to the source repository for a public registry provider
 title: "[Artifact Management]: Change provider source repository"
-labels: []
+labels:
+  - issue:artifact-management
+  - issue:source-repo-change
 assignees: []
 body:
   - type: markdown

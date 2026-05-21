@@ -1,7 +1,8 @@
 name: Public registry artifact management
 description: Request ownership changes, removal from the registry, or provider source repository updates for a public registry artifact
 title: "[Artifact Management]: "
-labels: []
+labels:
+  - issue:artifact-management
 assignees: []
 body:
   - type: markdown

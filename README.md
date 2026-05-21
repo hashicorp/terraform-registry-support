@@ -73,3 +73,9 @@ Helpful reports usually answer questions like:
 ## Response expectations
 
 Issues in this repository are intended to help the Terraform team track and triage problems with the Registry. While we may not be able to respond to every report immediately, clear and reproducible issues are the easiest to investigate and route appropriately.
+
+## Slack notifications
+
+New issues can be forwarded to Slack by the workflow in `.github/workflows/notify-slack-on-issue.yml`.
+
+Configure the repository secret `SLACK_TERRAFORM_REGISTRY_SUPPORT_WEBHOOK_URL` with an incoming webhook for the `#support-terraform-registry` channel in the `ibm-hashicorp` Slack workspace.

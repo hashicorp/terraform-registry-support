@@ -1,7 +1,9 @@
 name: Change artifact ownership
 description: Request an ownership transfer for a public registry provider or module
 title: "[Artifact Management]: Change artifact ownership"
-labels: []
+labels:
+  - issue:artifact-management
+  - issue:ownership-change
 assignees: []
 body:
   - type: markdown
