@@ -59,6 +59,8 @@ jobs:
 
           request_type="$(extract_section "Request type")"
           template_kind="generic"
+          issue_title_safe="${ISSUE_TITLE//|/-}"
+          issue_reference="<${ISSUE_URL}|#${ISSUE_NUMBER} ${issue_title_safe}>"
           summary="$(truncate "$ISSUE_BODY" 500)"
           registry_url=""
           bug_description=""
@@ -154,9 +156,7 @@ jobs:
           payload=$(jq -n \
             --arg issue_type "$template_kind" \
             --arg repository "$REPOSITORY" \
-            --arg issue_title "$ISSUE_TITLE" \
-            --arg issue_url "$ISSUE_URL" \
-            --arg issue_number "$ISSUE_NUMBER" \
+            --arg issue_reference "$issue_reference" \
             --arg issue_author "$ISSUE_AUTHOR" \
             --arg issue_labels "$labels" \
             --arg request_type "$request_type" \
@@ -177,9 +177,7 @@ jobs:
             '{
               issue_type: $issue_type,
               repository: $repository,
-              issue_title: $issue_title,
-              issue_url: $issue_url,
-              issue_number: $issue_number,
+              issue_reference: $issue_reference,
               issue_author: $issue_author,
               issue_labels: $issue_labels,
               request_type: $request_type,

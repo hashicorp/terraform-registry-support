@@ -16,9 +16,7 @@ The GitHub Action sends these fields in the webhook payload:
 
 - `issue_type`
 - `repository`
-- `issue_title`
-- `issue_url`
-- `issue_number`
+- `issue_reference`
 - `issue_author`
 - `issue_labels`
 - `request_type`
@@ -36,6 +34,8 @@ The GitHub Action sends these fields in the webhook payload:
 - `new_repo`
 - `current_verification`
 - `new_verification`
+
+This stays within Slack's 20-variable limit for webhook-triggered workflows.
 
 ## Branching
 
@@ -56,7 +56,7 @@ Send each message to `#support-terraform-registry`.
 
 ```text
 :beetle: *New Registry bug report*
-*Issue:* <{{issue_url}}|#{{issue_number}} {{issue_title}}>
+*Issue:* {{issue_reference}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 *Labels:* `{{issue_labels}}`
@@ -71,7 +71,7 @@ Send each message to `#support-terraform-registry`.
 
 ```text
 :key: *New artifact ownership request*
-*Issue:* <{{issue_url}}|#{{issue_number}} {{issue_title}}>
+*Issue:* {{issue_reference}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 
@@ -87,7 +87,7 @@ Send each message to `#support-terraform-registry`.
 
 ```text
 :warning: *New artifact removal request*
-*Issue:* <{{issue_url}}|#{{issue_number}} {{issue_title}}>
+*Issue:* {{issue_reference}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 
@@ -102,7 +102,7 @@ Send each message to `#support-terraform-registry`.
 
 ```text
 :twisted_rightwards_arrows: *New provider source repository change request*
-*Issue:* <{{issue_url}}|#{{issue_number}} {{issue_title}}>
+*Issue:* {{issue_reference}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 
@@ -118,7 +118,7 @@ Send each message to `#support-terraform-registry`.
 
 ```text
 :package: *New artifact management request*
-*Issue:* <{{issue_url}}|#{{issue_number}} {{issue_title}}>
+*Issue:* {{issue_reference}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 
@@ -134,7 +134,7 @@ Send each message to `#support-terraform-registry`.
 
 ```text
 :github: *New Terraform Registry support issue*
-*Issue:* <{{issue_url}}|#{{issue_number}} {{issue_title}}>
+*Issue:* {{issue_reference}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 *Labels:* `{{issue_labels}}`
