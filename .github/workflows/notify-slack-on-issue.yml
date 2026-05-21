@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Post new issue to Slack
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TERRAFORM_REGISTRY_SUPPORT_WEBHOOK_URL }}
+          SLACK_WORKFLOW_WEBHOOK_URL: ${{ secrets.SLACK_TERRAFORM_REGISTRY_SUPPORT_WORKFLOW_WEBHOOK_URL }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
@@ -59,8 +59,20 @@ jobs:
 
           request_type="$(extract_section "Request type")"
           template_kind="generic"
-          header=":github: New Terraform Registry support issue"
           summary="$(truncate "$ISSUE_BODY" 500)"
+          registry_url=""
+          bug_description=""
+          expected_behavior=""
+          reproduction=""
+          artifact_url=""
+          requestor_github=""
+          new_owner_github=""
+          requested_action=""
+          reason=""
+          current_repo=""
+          new_repo=""
+          current_verification=""
+          new_verification=""
 
           if has_label "issue:bug"; then
             template_kind="bug"
@@ -93,7 +105,6 @@ jobs:
               bug_description="$(truncate "$(extract_section "Describe the bug")" 220)"
               expected_behavior="$(truncate "$(extract_section "Expected behavior")" 180)"
               reproduction="$(truncate "$(extract_section "To Reproduce")" 180)"
-              header=":beetle: New Registry bug report"
               summary="*Registry URL:* ${registry_url:-not provided}\n*Bug:* ${bug_description:-not provided}\n*Expected:* ${expected_behavior:-not provided}\n*Repro:* ${reproduction:-not provided}"
               ;;
             ownership)
@@ -102,24 +113,22 @@ jobs:
               reason="$(truncate "$(extract_section "Reason for request")" 180)"
               requestor_github="$(extract_section "GitHub username")"
               new_owner_github="$(extract_section "New owner GitHub username")"
-              verification_link="$(extract_section "Link to .terraform-registry file")"
-              if [ -z "$verification_link" ]; then
-                verification_link="$(extract_section "Link to current repository .terraform-registry file")"
+              current_verification="$(extract_section "Link to .terraform-registry file")"
+              if [ -z "$current_verification" ]; then
+                current_verification="$(extract_section "Link to current repository .terraform-registry file")"
               fi
-              header=":key: New artifact ownership request"
-              summary="*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*New owner:* ${new_owner_github:-not provided}\n*Action:* ${requested_action:-not provided}\n*Reason:* ${reason:-not provided}\n*Verification:* ${verification_link:-not provided}"
+              summary="*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*New owner:* ${new_owner_github:-not provided}\n*Action:* ${requested_action:-not provided}\n*Reason:* ${reason:-not provided}\n*Verification:* ${current_verification:-not provided}"
               ;;
             removal)
               artifact_url="$(extract_section "Registry artifact URL")"
               requested_action="$(truncate "$(extract_section "Requested action")" 180)"
               reason="$(truncate "$(extract_section "Reason for request")" 180)"
               requestor_github="$(extract_section "GitHub username")"
-              verification_link="$(extract_section "Link to .terraform-registry file")"
-              if [ -z "$verification_link" ]; then
-                verification_link="$(extract_section "Link to current repository .terraform-registry file")"
+              current_verification="$(extract_section "Link to .terraform-registry file")"
+              if [ -z "$current_verification" ]; then
+                current_verification="$(extract_section "Link to current repository .terraform-registry file")"
               fi
-              header=":warning: New artifact removal request"
-              summary="*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*Action:* ${requested_action:-not provided}\n*Reason:* ${reason:-not provided}\n*Verification:* ${verification_link:-not provided}"
+              summary="*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*Action:* ${requested_action:-not provided}\n*Reason:* ${reason:-not provided}\n*Verification:* ${current_verification:-not provided}"
               ;;
             source-repo-change)
               artifact_url="$(extract_section "Registry artifact URL")"
@@ -129,7 +138,6 @@ jobs:
               requestor_github="$(extract_section "GitHub username")"
               current_verification="$(extract_section "Link to current repository .terraform-registry file")"
               new_verification="$(extract_section "Link to new repository .terraform-registry file")"
-              header=":twisted_rightwards_arrows: New provider source repository change request"
               summary="*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*Current repo:* ${current_repo:-not provided}\n*Requested repo:* ${new_repo:-not provided}\n*Action:* ${requested_action:-not provided}\n*Verification:* current=${current_verification:-not provided}, new=${new_verification:-not provided}"
               ;;
             artifact-management)
@@ -139,50 +147,59 @@ jobs:
               requestor_github="$(extract_section "GitHub username")"
               current_verification="$(extract_section "Link to current repository .terraform-registry file")"
               new_verification="$(extract_section "Link to new repository .terraform-registry file")"
-              header=":package: New artifact management request"
               summary="*Request type:* ${request_type:-not provided}\n*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*Action:* ${requested_action:-not provided}\n*Reason:* ${reason:-not provided}\n*Verification:* current=${current_verification:-not provided}, new=${new_verification:-not provided}"
               ;;
           esac
 
           payload=$(jq -n \
+            --arg issue_type "$template_kind" \
             --arg repository "$REPOSITORY" \
-            --arg title "$ISSUE_TITLE" \
-            --arg url "$ISSUE_URL" \
-            --arg number "$ISSUE_NUMBER" \
-            --arg author "$ISSUE_AUTHOR" \
-            --arg header "$header" \
+            --arg issue_title "$ISSUE_TITLE" \
+            --arg issue_url "$ISSUE_URL" \
+            --arg issue_number "$ISSUE_NUMBER" \
+            --arg issue_author "$ISSUE_AUTHOR" \
+            --arg issue_labels "$labels" \
+            --arg request_type "$request_type" \
             --arg summary "$summary" \
-            --arg labels "$labels" \
+            --arg registry_url "$registry_url" \
+            --arg bug_description "$bug_description" \
+            --arg expected_behavior "$expected_behavior" \
+            --arg reproduction "$reproduction" \
+            --arg artifact_url "$artifact_url" \
+            --arg requestor_github "$requestor_github" \
+            --arg new_owner_github "$new_owner_github" \
+            --arg requested_action "$requested_action" \
+            --arg reason "$reason" \
+            --arg current_repo "$current_repo" \
+            --arg new_repo "$new_repo" \
+            --arg current_verification "$current_verification" \
+            --arg new_verification "$new_verification" \
             '{
-              text: ("New issue opened in " + $repository),
-              blocks: [
-                {
-                  type: "section",
-                  text: {
-                    type: "mrkdwn",
-                    text: ("*" + $header + "*\n<" + $url + "|#" + $number + " " + $title + ">")
-                  }
-                },
-                {
-                  type: "context",
-                  elements: [
-                    {
-                      type: "mrkdwn",
-                      text: ("Opened by `" + $author + "` | Labels: `" + $labels + "`")
-                    }
-                  ]
-                },
-                {
-                  type: "section",
-                  text: {
-                    type: "mrkdwn",
-                    text: (if ($summary | length) > 0 then $summary else "No issue details provided." end)
-                  }
-                }
-              ]
+              issue_type: $issue_type,
+              repository: $repository,
+              issue_title: $issue_title,
+              issue_url: $issue_url,
+              issue_number: $issue_number,
+              issue_author: $issue_author,
+              issue_labels: $issue_labels,
+              request_type: $request_type,
+              issue_summary: $summary,
+              registry_url: $registry_url,
+              bug_description: $bug_description,
+              expected_behavior: $expected_behavior,
+              reproduction: $reproduction,
+              artifact_url: $artifact_url,
+              requestor_github: $requestor_github,
+              new_owner_github: $new_owner_github,
+              requested_action: $requested_action,
+              reason: $reason,
+              current_repo: $current_repo,
+              new_repo: $new_repo,
+              current_verification: $current_verification,
+              new_verification: $new_verification
             }')
 
           curl -X POST \
             -H 'Content-type: application/json' \
             --data "$payload" \
-            "$SLACK_WEBHOOK_URL"
+            "$SLACK_WORKFLOW_WEBHOOK_URL"

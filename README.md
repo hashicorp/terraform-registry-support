@@ -78,4 +78,6 @@ Issues in this repository are intended to help the Terraform team track and tria
 
 New issues can be forwarded to Slack by the workflow in `.github/workflows/notify-slack-on-issue.yml`.
 
-Configure the repository secret `SLACK_TERRAFORM_REGISTRY_SUPPORT_WEBHOOK_URL` with an incoming webhook for the `#support-terraform-registry` channel in the `ibm-hashicorp` Slack workspace.
+Configure the repository secret `SLACK_TERRAFORM_REGISTRY_SUPPORT_WORKFLOW_WEBHOOK_URL` with the webhook URL for your Slack workflow in the `ibm-hashicorp` Slack workspace. The GitHub Action sends the issue type and parsed template fields as JSON so the Slack workflow can branch and format the final message.
+
+See `.github/slack-workflow-builder.md` for the matching Slack Workflow Builder configuration.
