@@ -4,6 +4,7 @@ title: "[Artifact Management]: Remove artifact from registry"
 labels:
   - issue:artifact-management
   - issue:artifact-removal
+type: task
 assignees: []
 body:
   - type: markdown

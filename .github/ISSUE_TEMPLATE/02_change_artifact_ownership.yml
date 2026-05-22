@@ -4,6 +4,7 @@ title: "[Artifact Management]: Change artifact ownership"
 labels:
   - issue:artifact-management
   - issue:ownership-change
+type: task
 assignees: []
 body:
   - type: markdown

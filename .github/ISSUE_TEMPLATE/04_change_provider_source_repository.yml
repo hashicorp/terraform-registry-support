@@ -4,6 +4,7 @@ title: "[Artifact Management]: Change provider source repository"
 labels:
   - issue:artifact-management
   - issue:source-repo-change
+type: task
 assignees: []
 body:
   - type: markdown
