@@ -37,7 +37,7 @@ The GitHub Action sends these fields in the webhook payload:
 
 This stays within Slack's 20-variable limit for webhook-triggered workflows.
 
-`issue_reference` is formatted as `#<number> <linked title>` in the GitHub payload, but Slack may render it as plain text. `issue_url` is sent separately so the Slack workflow can display the raw link if needed.
+`issue_reference` is formatted as plain text: `#<number> <title>`. `issue_url` is sent separately so the Slack workflow can display the raw link.
 
 ## Branching
 

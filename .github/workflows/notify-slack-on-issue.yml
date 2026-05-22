@@ -76,7 +76,7 @@ jobs:
           request_type="$(extract_section "Request type")"
           template_kind="generic"
           issue_title_safe="${ISSUE_TITLE//|/-}"
-          issue_reference="#${ISSUE_NUMBER} <${ISSUE_URL}|${issue_title_safe}>"
+          issue_reference="#${ISSUE_NUMBER} ${issue_title_safe}"
           summary="$(truncate_text "$ISSUE_BODY" 500)"
           registry_url=""
           bug_description=""
