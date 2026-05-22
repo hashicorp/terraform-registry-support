@@ -173,9 +173,9 @@ jobs:
             --arg issue_type "$template_kind" \
             --arg repository "$REPOSITORY" \
             --arg issue_reference "$issue_reference" \
+            --arg issue_url "$ISSUE_URL" \
             --arg issue_author "$ISSUE_AUTHOR" \
             --arg issue_labels "$labels" \
-            --arg request_type "$request_type" \
             --arg summary "$summary" \
             --arg registry_url "$registry_url" \
             --arg bug_description "$bug_description" \
@@ -194,9 +194,9 @@ jobs:
               issue_type: $issue_type,
               repository: $repository,
               issue_reference: $issue_reference,
+              issue_url: $issue_url,
               issue_author: $issue_author,
               issue_labels: $issue_labels,
-              request_type: $request_type,
               issue_summary: $summary,
               registry_url: $registry_url,
               bug_description: $bug_description,

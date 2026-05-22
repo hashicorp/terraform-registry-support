@@ -17,9 +17,9 @@ The GitHub Action sends these fields in the webhook payload:
 - `issue_type`
 - `repository`
 - `issue_reference`
+- `issue_url`
 - `issue_author`
 - `issue_labels`
-- `request_type`
 - `issue_summary`
 - `registry_url`
 - `bug_description`
@@ -37,7 +37,7 @@ The GitHub Action sends these fields in the webhook payload:
 
 This stays within Slack's 20-variable limit for webhook-triggered workflows.
 
-`issue_reference` is formatted as `#<number> <linked title>` so the title itself links to the GitHub issue.
+`issue_reference` is formatted as `#<number> <linked title>` in the GitHub payload, but Slack may render it as plain text. `issue_url` is sent separately so the Slack workflow can display the raw link if needed.
 
 ## Branching
 
@@ -59,6 +59,7 @@ Send each message to `#support-terraform-registry`.
 ```text
 :beetle: *New Registry bug report*
 *Issue:* {{issue_reference}}
+*Link:* {{issue_url}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 *Labels:* `{{issue_labels}}`
@@ -74,6 +75,7 @@ Send each message to `#support-terraform-registry`.
 ```text
 :key: *New artifact ownership request*
 *Issue:* {{issue_reference}}
+*Link:* {{issue_url}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 
@@ -90,6 +92,7 @@ Send each message to `#support-terraform-registry`.
 ```text
 :warning: *New artifact removal request*
 *Issue:* {{issue_reference}}
+*Link:* {{issue_url}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 
@@ -105,6 +108,7 @@ Send each message to `#support-terraform-registry`.
 ```text
 :twisted_rightwards_arrows: *New provider source repository change request*
 *Issue:* {{issue_reference}}
+*Link:* {{issue_url}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 
@@ -121,10 +125,10 @@ Send each message to `#support-terraform-registry`.
 ```text
 :package: *New artifact management request*
 *Issue:* {{issue_reference}}
+*Link:* {{issue_url}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 
-*Request type:* {{request_type}}
 *Artifact:* {{artifact_url}}
 *Requestor:* {{requestor_github}}
 *Action:* {{requested_action}}
@@ -137,6 +141,7 @@ Send each message to `#support-terraform-registry`.
 ```text
 :github: *New Terraform Registry support issue*
 *Issue:* {{issue_reference}}
+*Link:* {{issue_url}}
 *Opened by:* `{{issue_author}}`
 *Repo:* `{{repository}}`
 *Labels:* `{{issue_labels}}`
