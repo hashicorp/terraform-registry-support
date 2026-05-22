@@ -37,6 +37,8 @@ The GitHub Action sends these fields in the webhook payload:
 
 This stays within Slack's 20-variable limit for webhook-triggered workflows.
 
+`issue_reference` is formatted as `#<number> <linked title>` so the title itself links to the GitHub issue.
+
 ## Branching
 
 Add a branch step on `issue_type` with these cases:
@@ -145,4 +147,6 @@ Send each message to `#support-terraform-registry`.
 ## Notes
 
 - Insert Slack variables using Workflow Builder's variable picker rather than typing the braces manually if Slack rewrites the formatting.
+- Keep formatting in the Slack message step. Webhook variables should contain raw values, not Slack markdown.
+- Put long fields like bug descriptions, expected behavior, reproduction steps, reasons, and requested actions on their own lines so Slack preserves multi-line content cleanly.
 - The GitHub Action is implemented in `.github/workflows/notify-slack-on-issue.yml`.

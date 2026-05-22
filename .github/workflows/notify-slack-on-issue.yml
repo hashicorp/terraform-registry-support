@@ -20,13 +20,13 @@ jobs:
           ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ', ') }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          compact() {
+          single_line() {
             printf '%s' "$1" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//'
           }
 
-          truncate() {
+          truncate_text() {
             local value
-            value="$(compact "$1")"
+            value="$1"
             local limit="$2"
             if [ ${#value} -gt "$limit" ]; then
               printf '%s...' "${value:0:$((limit - 3))}"
@@ -41,9 +41,25 @@ jobs:
             value=$(printf '%s\n' "$ISSUE_BODY" | awk -v heading="### ${heading}" '
               $0 == heading { capture=1; next }
               capture && /^### / { exit }
-              capture { print }
+              capture { lines[++count] = $0 }
+              END {
+                start = 1
+                while (start <= count && lines[start] ~ /^[[:space:]]*$/) start++
+
+                end = count
+                while (end >= start && lines[end] ~ /^[[:space:]]*$/) end--
+
+                for (i = start; i <= end; i++) {
+                  sub(/[[:space:]]+$/, "", lines[i])
+                  print lines[i]
+                }
+              }
             ')
-            compact "$value"
+            printf '%s' "$value"
+          }
+
+          extract_section_inline() {
+            single_line "$(extract_section "$1")"
           }
 
           normalized_labels=",${ISSUE_LABELS//, /,},"
@@ -60,8 +76,8 @@ jobs:
           request_type="$(extract_section "Request type")"
           template_kind="generic"
           issue_title_safe="${ISSUE_TITLE//|/-}"
-          issue_reference="<${ISSUE_URL}|#${ISSUE_NUMBER} ${issue_title_safe}>"
-          summary="$(truncate "$ISSUE_BODY" 500)"
+          issue_reference="#${ISSUE_NUMBER} <${ISSUE_URL}|${issue_title_safe}>"
+          summary="$(truncate_text "$ISSUE_BODY" 500)"
           registry_url=""
           bug_description=""
           expected_behavior=""
@@ -103,53 +119,53 @@ jobs:
 
           case "$template_kind" in
             bug)
-              registry_url="$(extract_section "Registry URL")"
-              bug_description="$(truncate "$(extract_section "Describe the bug")" 220)"
-              expected_behavior="$(truncate "$(extract_section "Expected behavior")" 180)"
-              reproduction="$(truncate "$(extract_section "To Reproduce")" 180)"
-              summary="*Registry URL:* ${registry_url:-not provided}\n*Bug:* ${bug_description:-not provided}\n*Expected:* ${expected_behavior:-not provided}\n*Repro:* ${reproduction:-not provided}"
+              registry_url="$(extract_section_inline "Registry URL")"
+              bug_description="$(truncate_text "$(extract_section "Describe the bug")" 220)"
+              expected_behavior="$(truncate_text "$(extract_section "Expected behavior")" 180)"
+              reproduction="$(truncate_text "$(extract_section "To Reproduce")" 220)"
+              summary="Registry URL: ${registry_url:-not provided}\n\nBug:\n${bug_description:-not provided}\n\nExpected:\n${expected_behavior:-not provided}\n\nRepro:\n${reproduction:-not provided}"
               ;;
             ownership)
-              artifact_url="$(extract_section "Registry artifact URL")"
-              requested_action="$(truncate "$(extract_section "Requested action")" 180)"
-              reason="$(truncate "$(extract_section "Reason for request")" 180)"
-              requestor_github="$(extract_section "GitHub username")"
-              new_owner_github="$(extract_section "New owner GitHub username")"
-              current_verification="$(extract_section "Link to .terraform-registry file")"
+              artifact_url="$(extract_section_inline "Registry artifact URL")"
+              requested_action="$(truncate_text "$(extract_section "Requested action")" 180)"
+              reason="$(truncate_text "$(extract_section "Reason for request")" 180)"
+              requestor_github="$(extract_section_inline "GitHub username")"
+              new_owner_github="$(extract_section_inline "New owner GitHub username")"
+              current_verification="$(extract_section_inline "Link to .terraform-registry file")"
               if [ -z "$current_verification" ]; then
-                current_verification="$(extract_section "Link to current repository .terraform-registry file")"
+                current_verification="$(extract_section_inline "Link to current repository .terraform-registry file")"
               fi
-              summary="*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*New owner:* ${new_owner_github:-not provided}\n*Action:* ${requested_action:-not provided}\n*Reason:* ${reason:-not provided}\n*Verification:* ${current_verification:-not provided}"
+              summary="Artifact: ${artifact_url:-not provided}\nRequestor: ${requestor_github:-not provided}\nNew owner: ${new_owner_github:-not provided}\n\nAction:\n${requested_action:-not provided}\n\nReason:\n${reason:-not provided}\n\nVerification:\n${current_verification:-not provided}"
               ;;
             removal)
-              artifact_url="$(extract_section "Registry artifact URL")"
-              requested_action="$(truncate "$(extract_section "Requested action")" 180)"
-              reason="$(truncate "$(extract_section "Reason for request")" 180)"
-              requestor_github="$(extract_section "GitHub username")"
-              current_verification="$(extract_section "Link to .terraform-registry file")"
+              artifact_url="$(extract_section_inline "Registry artifact URL")"
+              requested_action="$(truncate_text "$(extract_section "Requested action")" 180)"
+              reason="$(truncate_text "$(extract_section "Reason for request")" 180)"
+              requestor_github="$(extract_section_inline "GitHub username")"
+              current_verification="$(extract_section_inline "Link to .terraform-registry file")"
               if [ -z "$current_verification" ]; then
-                current_verification="$(extract_section "Link to current repository .terraform-registry file")"
+                current_verification="$(extract_section_inline "Link to current repository .terraform-registry file")"
               fi
-              summary="*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*Action:* ${requested_action:-not provided}\n*Reason:* ${reason:-not provided}\n*Verification:* ${current_verification:-not provided}"
+              summary="Artifact: ${artifact_url:-not provided}\nRequestor: ${requestor_github:-not provided}\n\nAction:\n${requested_action:-not provided}\n\nReason:\n${reason:-not provided}\n\nVerification:\n${current_verification:-not provided}"
               ;;
             source-repo-change)
-              artifact_url="$(extract_section "Registry artifact URL")"
-              current_repo="$(extract_section "Current source repository URL")"
-              new_repo="$(extract_section "Requested new source repository URL")"
-              requested_action="$(truncate "$(extract_section "Requested action")" 180)"
-              requestor_github="$(extract_section "GitHub username")"
-              current_verification="$(extract_section "Link to current repository .terraform-registry file")"
-              new_verification="$(extract_section "Link to new repository .terraform-registry file")"
-              summary="*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*Current repo:* ${current_repo:-not provided}\n*Requested repo:* ${new_repo:-not provided}\n*Action:* ${requested_action:-not provided}\n*Verification:* current=${current_verification:-not provided}, new=${new_verification:-not provided}"
+              artifact_url="$(extract_section_inline "Registry artifact URL")"
+              current_repo="$(extract_section_inline "Current source repository URL")"
+              new_repo="$(extract_section_inline "Requested new source repository URL")"
+              requested_action="$(truncate_text "$(extract_section "Requested action")" 180)"
+              requestor_github="$(extract_section_inline "GitHub username")"
+              current_verification="$(extract_section_inline "Link to current repository .terraform-registry file")"
+              new_verification="$(extract_section_inline "Link to new repository .terraform-registry file")"
+              summary="Artifact: ${artifact_url:-not provided}\nRequestor: ${requestor_github:-not provided}\nCurrent repo: ${current_repo:-not provided}\nRequested repo: ${new_repo:-not provided}\n\nAction:\n${requested_action:-not provided}\n\nVerification:\n- Current: ${current_verification:-not provided}\n- New: ${new_verification:-not provided}"
               ;;
             artifact-management)
-              artifact_url="$(extract_section "Registry artifact URL")"
-              requested_action="$(truncate "$(extract_section "Requested action")" 180)"
-              reason="$(truncate "$(extract_section "Reason for request")" 180)"
-              requestor_github="$(extract_section "GitHub username")"
-              current_verification="$(extract_section "Link to current repository .terraform-registry file")"
-              new_verification="$(extract_section "Link to new repository .terraform-registry file")"
-              summary="*Request type:* ${request_type:-not provided}\n*Artifact:* ${artifact_url:-not provided}\n*Requestor:* ${requestor_github:-not provided}\n*Action:* ${requested_action:-not provided}\n*Reason:* ${reason:-not provided}\n*Verification:* current=${current_verification:-not provided}, new=${new_verification:-not provided}"
+              artifact_url="$(extract_section_inline "Registry artifact URL")"
+              requested_action="$(truncate_text "$(extract_section "Requested action")" 180)"
+              reason="$(truncate_text "$(extract_section "Reason for request")" 180)"
+              requestor_github="$(extract_section_inline "GitHub username")"
+              current_verification="$(extract_section_inline "Link to current repository .terraform-registry file")"
+              new_verification="$(extract_section_inline "Link to new repository .terraform-registry file")"
+              summary="Request type: ${request_type:-not provided}\nArtifact: ${artifact_url:-not provided}\nRequestor: ${requestor_github:-not provided}\n\nAction:\n${requested_action:-not provided}\n\nReason:\n${reason:-not provided}\n\nVerification:\n- Current: ${current_verification:-not provided}\n- New: ${new_verification:-not provided}"
               ;;
           esac
 
