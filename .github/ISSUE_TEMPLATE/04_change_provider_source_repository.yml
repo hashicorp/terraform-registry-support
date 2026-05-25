@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2026
+
 name: Change provider source repository
 description: Request an update to the source repository for a public registry provider
 title: "[Artifact Management]: Change provider source repository"
