@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2026
+
 name: Change artifact ownership
 description: Request an ownership transfer for a public registry provider or module
 title: "[Artifact Management]: Change artifact ownership"
